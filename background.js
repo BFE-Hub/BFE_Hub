@@ -5,6 +5,14 @@ function utf8_to_b64(str) {
   return btoa(unescape(encodeURIComponent(str)));
 }
 
+function sanitizePath(str) {
+  // Replace unsafe chars with space or remove them.
+  // Allowed: alphanumeric, space, dot, hyphen, underscore
+  // We should trim dots and spaces slightly
+  if (!str) return 'Unknown';
+  return str.replace(/[\\/:*?"<>|]/g, ' ').trim();
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'UPLOAD_FILE') {
     console.log('BFEHub [Background]: UPLOAD_FILE received', request.data);
@@ -14,7 +22,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 async function handleUpload(data, sendResponse) {
-  const { filename, code } = data;
+  // filename was legacy input, we now expect permalink, code, metadata
+  const { code, permalink, title, category, description } = data;
 
   try {
     // 1. Get Settings
@@ -23,15 +32,42 @@ async function handleUpload(data, sendResponse) {
     if (!githubToken || !repoName || !username) {
       throw new Error('Missing configuration. Please check extension settings.');
     }
+    
+    // Construct Paths
+    const safeCategory = sanitizePath(category);
+    // Permalink is usually safe but let's be sure
+    const safePermalink = sanitizePath(permalink);
+    
+    // File 1: Solution JS
+    const jsPath = `${safeCategory}/${safePermalink}/${safePermalink}.js`;
+    
+    // File 2: README
+    const readmePath = `${safeCategory}/${safePermalink}/README.md`;
+    const readmeContent = `# ${title}\n\n## Description\n${description}`;
 
-    const path = filename; // We can add directory structure later if needed, e.g., `solutions/${filename}`
+    // Upload sequential
+    console.log(`BFEHub: Uploading ${jsPath}...`);
+    await uploadFileToGitHub(username, repoName, jsPath, code, `Add solution for ${title}`, githubToken);
+    
+    console.log(`BFEHub: Uploading ${readmePath}...`);
+    await uploadFileToGitHub(username, repoName, readmePath, readmeContent, `Add README for ${title}`, githubToken);
+
+    sendResponse({ success: true });
+
+  } catch (error) {
+    console.error('BFEHub Upload Error:', error);
+    sendResponse({ success: false, error: error.message });
+  }
+}
+
+async function uploadFileToGitHub(username, repoName, path, content, message, token) {
     const url = `https://api.github.com/repos/${username}/${repoName}/contents/${path}`;
 
-    // 2. Check if file exists to get SHA
+    // Check if file exists to get SHA
     let sha = null;
     const getRes = await fetch(url, {
       headers: {
-        'Authorization': `token ${githubToken}`,
+        'Authorization': `token ${token}`,
         'Accept': 'application/vnd.github.v3+json'
       }
     });
@@ -43,25 +79,24 @@ async function handleUpload(data, sendResponse) {
       throw new Error(`Error checking file: ${getRes.status}`);
     }
 
-    // 3. Create or Update File
-    const contentEncoded = utf8_to_b64(code);
-    const message = `Add solution for ${filename.replace('.js', '')}`; // Commit message
+    // Create or Update
+    const contentEncoded = utf8_to_b64(content);
 
     const putBody = {
       message: message,
       content: contentEncoded,
-      branch: 'main' // default branch
+      branch: 'main'
     };
 
     if (sha) {
       putBody.sha = sha;
-      putBody.message = `Update solution for ${filename.replace('.js', '')}`;
+      putBody.message = `Update ${path}`;
     }
 
     const putRes = await fetch(url, {
       method: 'PUT',
       headers: {
-        'Authorization': `token ${githubToken}`,
+        'Authorization': `token ${token}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
@@ -70,13 +105,8 @@ async function handleUpload(data, sendResponse) {
 
     if (!putRes.ok) {
       const errorJson = await putRes.json();
-      throw new Error(`Upload failed: ${errorJson.message || putRes.statusText}`);
+      throw new Error(`Upload failed for ${path}: ${errorJson.message || putRes.statusText}`);
     }
-
-    sendResponse({ success: true });
-
-  } catch (error) {
-    console.error('BFEHub Upload Error:', error);
-    sendResponse({ success: false, error: error.message });
-  }
+    
+    return putRes;
 }
