@@ -70,7 +70,20 @@
 
   <div id="logged-in-view" class="hidden">
       <div class="user-info">Logged in as: <strong id="username">...</strong></div>
-      <div class="repo-info">Repository: <strong id="repo-name">bfe-solutions</strong></div>
+      
+      <div class="repo-info">
+          Repository: 
+          <span id="repo-view-mode">
+              <strong id="repo-name">bfe-solutions</strong>
+              <a href="#" id="edit-repo-btn" style="margin-left:5px; font-size:11px;">Edit</a>
+          </span>
+          <span id="repo-edit-mode" class="hidden">
+              <input type="text" id="repo-input" style="width: 120px; font-size: 12px; padding: 2px;">
+              <button id="save-repo-btn" style="font-size: 11px; cursor: pointer;">Save</button>
+              <button id="cancel-repo-btn" style="font-size: 11px; cursor: pointer;">Msg</button>
+          </span>
+      </div>
+      
       <div id="status"></div>
   </div>
 
