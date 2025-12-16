@@ -1,103 +1,136 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const tokenInput = document.getElementById('token');
-  const repoInput = document.getElementById('repo');
-  const saveButton = document.getElementById('save');
-  const statusDiv = document.getElementById('status');
+  const loginButton = document.getElementById('login-btn');
+  const loginView = document.getElementById('login-view');
+  const loggedInView = document.getElementById('logged-in-view');
+  const usernameDisplay = document.getElementById('username');
+  const repoDisplay = document.getElementById('repo-name');
+  const statusDisplay = document.getElementById('status');
 
-  // Load saved settings
-  chrome.storage.local.get(['githubToken', 'repoName'], (result) => {
-    if (result.githubToken) tokenInput.value = result.githubToken;
-    if (result.repoName) repoInput.value = result.repoName;
+  
+  const AUTH_SERVER_URL = 'https://bfehub-server.vercel.app/api/authenticate'; // Short (aliased) URL for cleaner look
+  // Or 'https://bfehub-server-3ez0p6fh5-y-minions-projects.vercel.app/api/authenticate';
+  
+ 
+  const CLIENT_ID = 'Ov23li2iiQ7dfdHfA7V8'; 
+
+  // Check login state
+  chrome.storage.local.get(['githubToken', 'username', 'repoName'], (data) => {
+    if (data.githubToken) {
+      showLoggedIn(data.username, data.repoName);
+    }
   });
 
-  saveButton.addEventListener('click', async () => {
-    const token = tokenInput.value.trim();
-    const repoName = repoInput.value.trim();
+  loginButton.addEventListener('click', () => {
+    const redirectUri = chrome.identity.getRedirectURL(); // https://<AppID>.chromiumapp.org/
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=repo&redirect_uri=${redirectUri}`;
 
-    if (!token || !repoName) {
-      showStatus('Please fill in all fields', 'error');
-      return;
-    }
+    console.log('Starting Auth Flow:', authUrl);
 
-    setLoading(true);
-
-    try {
-      // 1. Validate Token & Get User Info
-      const userRes = await fetch('https://api.github.com/user', {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
-
-      if (!userRes.ok) {
-        throw new Error('Invalid Token');
+    chrome.identity.launchWebAuthFlow({
+      url: authUrl,
+      interactive: true
+    }, async (redirectUrl) => {
+      if (chrome.runtime.lastError || !redirectUrl) {
+        console.error('Auth Flow Error:', chrome.runtime.lastError);
+        alert('Login failed: ' + (chrome.runtime.lastError?.message || 'Unknown error'));
+        return;
       }
 
-      const user = await userRes.json();
-      const username = user.login;
+      // Parse code from redirectUrl
+      // URL format: https://<AppID>.chromiumapp.org/?code=...
+      const url = new URL(redirectUrl);
+      const code = url.searchParams.get('code');
 
-      // 2. Check if Repo Exists
-      const repoRes = await fetch(`https://api.github.com/repos/${username}/${repoName}`, {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
+      if (!code) {
+        alert('Login failed: No code received.');
+        return;
+      }
 
-      // 3. Create Repo if it doesn't exist
-      if (repoRes.status === 404) {
-        showStatus('Creating repository...', 'success'); // API call is fast but nice to give feedback
-        const createRes = await fetch('https://api.github.com/user/repos', {
+      // Exchange code for token via Backend
+      try {
+        loginButton.disabled = true;
+        loginButton.innerText = 'Verifying...';
+
+        const response = await fetch(AUTH_SERVER_URL, {
           method: 'POST',
-          headers: {
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: repoName,
-            auto_init: true,
-            private: false, // Default to public, matching typical behavior
-            description: 'Solutions from BFE.dev via BFEHub'
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code })
         });
 
-        if (!createRes.ok) {
-          throw new Error('Failed to create repository');
+        if (!response.ok) {
+           const errData = await response.json();
+           throw new Error(errData.error || 'Token exchange failed');
         }
-      } else if (!repoRes.ok) {
-        throw new Error('Error checking repository');
+
+        const data = await response.json();
+        const token = data.token;
+
+        // Perform initial setup (fetch user, create repo)
+        await performSetup(token);
+
+      } catch (error) {
+        console.error(error);
+        alert('Authentication Error: ' + error.message);
+        loginButton.disabled = false;
+        loginButton.innerText = 'Sign in with GitHub';
       }
-
-      // 4. Save Settings
-      chrome.storage.local.set({
-        githubToken: token,
-        repoName: repoName,
-        username: username
-      }, () => {
-        showStatus('Connected successfully! Settings saved.', 'success');
-      });
-
-    } catch (err) {
-      showStatus(err.message, 'error');
-    } finally {
-      setLoading(false);
-    }
+    });
   });
 
-  function showStatus(text, type) {
-    statusDiv.textContent = text;
-    statusDiv.className = type;
-    setTimeout(() => {
-      if (type === 'success') {
-        // statusDiv.textContent = ''; // keep success message for a bit
-      }
-    }, 3000);
+  async function performSetup(token) {
+    try {
+       // 1. Get User Info
+       const userRes = await fetch('https://api.github.com/user', {
+         headers: { 'Authorization': `token ${token}` }
+       });
+       if(!userRes.ok) throw new Error('Failed to fetch user info');
+       const user = await userRes.json();
+       
+       const username = user.login;
+       const repoName = 'bfe-solutions'; // Default
+
+       // 2. Check/Create Repo
+       const repoRes = await fetch(`https://api.github.com/repos/${username}/${repoName}`, {
+         headers: { 'Authorization': `token ${token}` }
+       });
+       
+       if (repoRes.status === 404) {
+          // Create
+          await fetch('https://api.github.com/user/repos', {
+            method: 'POST',
+            headers: {
+              'Authorization': `token ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: repoName,
+              auto_init: true,
+              description: 'Solutions from BFE.dev via BFEHub'
+            })
+          });
+       }
+
+       // 3. Save
+       chrome.storage.local.set({
+         githubToken: token,
+         username: username,
+         repoName: repoName
+       }, () => {
+         showLoggedIn(username, repoName);
+       });
+
+    } catch(e) {
+       console.error(e);
+       alert('Setup Error: ' + e.message);
+    }
   }
 
-  function setLoading(isLoading) {
-    saveButton.disabled = isLoading;
-    saveButton.textContent = isLoading ? 'Connecting...' : 'Save & Connect';
+  function showLoggedIn(username, repoName) {
+    loginView.classList.add('hidden');
+    loggedInView.classList.remove('hidden');
+    usernameDisplay.textContent = username;
+    repoDisplay.textContent = repoName || 'bfe-solutions';
+    statusDisplay.textContent = 'Connected successfully ✅';
+    statusDisplay.className = 'success';
   }
 });

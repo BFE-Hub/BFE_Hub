@@ -5,66 +5,75 @@
   <style>
     body {
       width: 300px;
-      padding: 15px;
+      padding: 20px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      text-align: center;
     }
     h2 {
       margin-top: 0;
       color: #333;
-      font-size: 16px;
+      font-size: 18px;
     }
-    .form-group {
-      margin-bottom: 12px;
+    .btn-github {
+      background-color: #24292e;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 15px;
     }
-    label {
-      display: block;
-      margin-bottom: 5px;
+    .btn-github:hover {
+      background-color: #1b1f23;
+    }
+    .btn-github svg {
+      margin-right: 8px;
+    }
+    #status {
+      margin-top: 15px;
       font-size: 12px;
       color: #666;
     }
-    input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #2ea44f;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:disabled {
-      background-color: #94d3a2;
-      cursor: not-allowed;
-    }
-    #status {
-      margin-top: 10px;
-      font-size: 12px;
-      text-align: center;
-      min-height: 15px;
-    }
-    .success { color: #2ea44f; }
+    .hidden { display: none; }
+    .success { color: #2ea44f; font-weight: bold; }
     .error { color: #cb2431; }
+    
+    #logged-in-view {
+       text-align: left;
+    }
+    .user-info {
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+    .repo-info {
+        font-size: 12px;
+        color: #586069;
+    }
   </style>
 </head>
 <body>
-  <h2>BFEHub Settings</h2>
-  <div class="form-group">
-    <label for="token">GitHub Personal Access Token</label>
-    <input type="password" id="token" placeholder="ghp_..." required>
+  <h2>BFEHub</h2>
+  
+  <div id="login-view">
+      <p style="font-size: 13px; color: #586069;">Sign in to sync your solutions to GitHub.</p>
+      <button id="login-btn" class="btn-github">
+        <svg height="20" viewBox="0 0 16 16" version="1.1" width="20" aria-hidden="true" fill="white"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+        Sign in with GitHub
+      </button>
   </div>
-  <div class="form-group">
-    <label for="repo">Repository Name</label>
-    <input type="text" id="repo" value="bfe-solutions" placeholder="bfe-solutions" required>
+
+  <div id="logged-in-view" class="hidden">
+      <div class="user-info">Logged in as: <strong id="username">...</strong></div>
+      <div class="repo-info">Repository: <strong id="repo-name">bfe-solutions</strong></div>
+      <div id="status"></div>
   </div>
-  <button id="save">Save & Connect</button>
-  <div id="status"></div>
+
   <script src="popup.js"></script>
 </body>
 </html>
