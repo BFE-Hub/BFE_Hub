@@ -7,14 +7,17 @@ window.addEventListener('message', (event) => {
   if (event.source !== window) return;
 
   if (event.data.type === 'BFE_SUBMISSION') {
-    console.log('BFEHub: Submission detected');
+    console.log('BFEHub [Content]: Submission detected', event.data.data);
     latestSubmission = event.data.data;
   }
 
   if (event.data.type === 'BFE_SUCCESS') {
-    console.log('BFEHub: Success detected');
+    console.log('BFEHub [Content]: Success detected');
     if (latestSubmission) {
+      console.log('BFEHub [Content]: Triggering handleSuccess');
       handleSuccess();
+    } else {
+      console.warn('BFEHub [Content]: Success detected but no submission data found.');
     }
   }
 });
@@ -42,18 +45,27 @@ function handleSuccess() {
   // But we need the Spinner to exist to turn it into Checkmark.
   
   // Let's fire upload.
-  chrome.runtime.sendMessage({
-    action: 'UPLOAD_FILE',
-    data: { filename, code }
-  }, (response) => {
-    if (response && response.success) {
-      console.log('BFEHub: Upload success');
-      markUiSuccess();
-    } else {
-      console.error('BFEHub: Upload failed', response.error);
-      // Optional: Show error state
-    }
-  });
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage({
+        action: 'UPLOAD_FILE',
+        data: { filename, code }
+      }, (response) => {
+        // Check for lastError to avoid unchecked runtime.lastError
+        if (chrome.runtime.lastError) {
+             console.error('BFEHub: Runtime error', chrome.runtime.lastError);
+             return;
+        }
+        if (response && response.success) {
+          console.log('BFEHub: Upload success');
+          markUiSuccess();
+        } else {
+          console.error('BFEHub: Upload failed', response ? response.error : 'Unknown error');
+          // Optional: Show error state
+        }
+      });
+  } else {
+      console.error('BFEHub: chrome.runtime.sendMessage is not available. Are you running this in standard web context?');
+  }
 }
 
 function observeModal() {

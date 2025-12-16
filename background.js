@@ -7,6 +7,7 @@ function utf8_to_b64(str) {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'UPLOAD_FILE') {
+    console.log('BFEHub [Background]: UPLOAD_FILE received', request.data);
     handleUpload(request.data, sendResponse);
     return true; // Keep the message channel open for async response
   }
