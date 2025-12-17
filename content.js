@@ -7,7 +7,7 @@ window.addEventListener('message', (event) => {
   if (event.source !== window) return;
 
   if (event.data.type === 'BFE_SUBMISSION') {
-    console.log('BFEHub [Content]: Submission detected', event.data.data);
+    console.log('BFE_Hub [Content]: Submission detected', event.data.data);
     latestSubmission = event.data.data;
     // Reset spinner if it exists from previous attempts, or keeps it until new one?
     // User wants checkmark to stay. But if I submit again, it should probably clear?
@@ -241,16 +241,14 @@ function markUiSuccess() {
   const checkInterval = setInterval(() => {
     if (spinnerElement) {
       clearInterval(checkInterval);
-      spinnerElement.innerHTML = '✅'; // Simple checkmark
-      // Success mark remains visible.
-      // setTimeout(() => {
-      //   if (spinnerElement) {
-      //     spinnerElement.style.transition = 'opacity 0.5s';
-      //     spinnerElement.style.opacity = '0';
-      //     setTimeout(() => spinnerElement.remove(), 500);
-      //     spinnerElement = null; // Reset for next submission
-      //   }
-      // }, 3000);
+      // Replace with SVG Icon
+      spinnerElement.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#78f000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check-big"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
+      `; 
+   
+      spinnerElement.style.display = 'inline-flex';
+      spinnerElement.style.alignItems = 'center';
+      spinnerElement.style.marginLeft = '8px';
     }
   }, 100); 
 }

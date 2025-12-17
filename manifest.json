@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "BFEHub",
+  "name": "BFE_Hub",
   "version": "1.0.0",
   "description": "Automatically commit BFE.dev solutions to GitHub",
   "permissions": [

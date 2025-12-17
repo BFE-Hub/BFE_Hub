@@ -18,9 +18,9 @@ module.exports = async (req, res) => {
 
   const { code } = req.body || {};
 
-  console.log('BFEHub Server: Received code', code ? 'Yes' : 'No');
-  console.log('BFEHub Server: Client ID present?', !!process.env.CLIENT_ID);
-  console.log('BFEHub Server: Client Secret present?', !!process.env.CLIENT_SECRET);
+  console.log('BFE_Hub Server: Received code', code ? 'Yes' : 'No');
+  console.log('BFE_Hub Server: Client ID present?', !!process.env.CLIENT_ID);
+  console.log('BFE_Hub Server: Client Secret present?', !!process.env.CLIENT_SECRET);
 
   if (!code) {
     return res.status(400).json({ error: 'Missing code parameter' });

@@ -1,5 +1,5 @@
 {
-  "name": "bfehub-server",
+  "name": "bfe_hub",
   "version": "1.0.0",
   "description": "OAuth relay server for BFEHub extension",
   "main": "api/authenticate.js",

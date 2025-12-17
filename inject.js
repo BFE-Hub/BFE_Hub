@@ -1,4 +1,4 @@
-console.log('BFEHub: Inject script loaded + XHR Support (Fetch & XHR).'); // This should appear if script runs.
+console.log('BFE_Hub: Inject script loaded + XHR Support (Fetch & XHR).'); // This should appear if script runs.
 
 // XHR Override
 (function() {
