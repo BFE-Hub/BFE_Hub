@@ -141,9 +141,23 @@ document.addEventListener('DOMContentLoaded', () => {
     loggedInView.classList.remove('hidden');
     
     usernameDisplay.innerText = username;
-    repoDisplay.innerText = repoName;
-    
-    statusDisplay.innerText = 'Connected successfully ✅';
-    statusDisplay.className = 'success';
+
+    if (repoName) {
+        // Normal View
+        repoDisplay.innerText = repoName;
+        repoViewMode.classList.remove('hidden');
+        repoEditMode.classList.add('hidden');
+        statusDisplay.innerText = 'Connected successfully ✅';
+        statusDisplay.className = 'success';
+    } else {
+        // First Time User: Force Edit Mode
+        repoDisplay.innerText = 'Not Set';
+        repoInput.value = 'bfe-solutions'; // Suggest default
+        repoViewMode.classList.add('hidden'); // Hide "Edit" button view
+        repoEditMode.classList.remove('hidden'); // Show Input
+        
+        statusDisplay.innerText = 'Please set a repository name.';
+        statusDisplay.className = '';
+    }
   }
 });

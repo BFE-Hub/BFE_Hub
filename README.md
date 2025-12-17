@@ -36,8 +36,9 @@
 
 1. **Sign In**: Click the BFE_Hub extension icon and sign in with your GitHub account.
 2. **Setup Repository**:
-   - By default, it creates/uses a repository named `bfe-solutions`.
-   - You can change this name by clicking the **"Edit"** button in the popup.
+   - After signing in, you will be prompted to set a repository name (default suggestion: `bfe-solutions`).
+   - Enter your desired repository name and click **"Save"**.
+   - If the repository doesn't exist, BFE_Hub will automatically create it for you.
 3. **Solve Problems**: Go to [BFE.dev](https://bigfrontend.dev) and solve a problem.
 4. **Submit**: Click "Submit" on BFE.dev.
 5. **Sync**: Once your solution passes, BFE_Hub will automatically upload your code and the problem description to your GitHub repository. You'll see a green checkmark ✅ next to the "Well Done!" message.

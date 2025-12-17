@@ -89,18 +89,39 @@ async function launchAuthFlow() {
     
     const user = await userRes.json();
     const username = user.login;
-    const repoName = 'bfe-solutions'; // Default
+    // const repoName = 'bfe-solutions'; // Removed default auto-creation
 
-    // Initialize Repo
-    await checkOrCreateRepo(token, username, repoName);
-
-    // Save to Storage
+    // Save to Storage - repoName is undefined/null initially
     await chrome.storage.local.set({
          githubToken: token,
          username: username,
-         repoName: repoName
+         // repoName: repoName // Do not set default repo name
     });
 }
+
+// Ensure checkOrCreateRepo is exported or available for messages if needed? 
+// Actually, popup.js handles the "Save" action which calls checkOrCreateRepo logic. 
+// BUT, popup.js currently calls checkOrCreateRepo itself via fetch. 
+// Wait, popup.js still has checkOrCreateRepo. 
+// However, checking the user's previous request (Step 475), I moved repo logic to background but Popup still had it?
+// Let's check popup.js content. 
+// In Step 476, popup.js delegates LOGIN to background. 
+// But when user clicks SAVE in edit mode, popup.js executes the logic.
+// That is fine. Popup.js logic for 'Save' uses `checkOrCreateRepo` defined in `popup.js`?
+// Yes, Step 476 shows `async function checkOrCreateRepo` is still in popup.js at the bottom.
+// So removing it from `launchAuthFlow` in background.js is safe and correct.
+
+// Only remove the auto-creation call. Keep the function definition if used elsewhere? 
+// `checkOrCreateRepo` in background.js is NOT used elsewhere if I remove it from here.
+// But wait, `handleUpload` might need to check if repo exists? 
+// `handleUpload` assumes repo exists and just uploads. If not, it fails.
+// So we can keep `checkOrCreateRepo` helper in background just in case we want to auto-create on upload? 
+// Or just remove the call. I will remove the call in `launchAuthFlow`.
+
+/* 
+   We also need to expose a way to 'Link Repository' from popup safely? 
+   Currently popup.js does it directly. That works. 
+*/
 
 async function checkOrCreateRepo(token, username, repoName) {
     const repoRes = await fetch(`https://api.github.com/repos/${username}/${repoName}`, {
