@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    /* Shadcn-like Design Tokens */
+    :root {
+      --background: #ffffff;
+      --foreground: #09090b; /* Zinc 950 */
+      --card: #ffffff;
+      --card-foreground: #09090b;
+      --popover: #ffffff;
+      --popover-foreground: #09090b;
+      --primary: #18181b; /* Zinc 900 */
+      --primary-foreground: #fafafa; /* Zinc 50 */
+      --secondary: #f4f4f5; /* Zinc 100 */
+      --secondary-foreground: #18181b;
+      --muted: #f4f4f5;
+      --muted-foreground: #71717a; /* Zinc 500 */
+      --accent: #f4f4f5;
+      --accent-foreground: #18181b;
+      --destructive: #ef4444;
+      --destructive-foreground: #fafafa;
+      --border: #e4e4e7; /* Zinc 200 */
+      --input: #e4e4e7;
+      --ring: #18181b;
+      --radius: 0.5rem;
+    }
+
+    body {
+      width: 320px;
+      margin: 0;
+      padding: 24px;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+
+    p {
+      margin: 0 0 20px 0;
+      font-size: 14px;
+      color: var(--muted-foreground);
+      line-height: 1.5;
+    }
+
+    /* Buttons */
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1;
+      padding: 10px 16px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+      outline: none;
+    }
+
+    button:focus-visible {
+      box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      width: 100%;
+      height: 40px;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: var(--secondary-foreground);
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+    .btn-secondary:hover {
+      background-color: #e4e4e7; /* Zinc 200 */
+    }
+
+    .btn-ghost {
+      background-color: transparent;
+      color: var(--muted-foreground);
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    .btn-ghost:hover {
+        color: var(--foreground);
+        background-color: var(--accent);
+    }
+
+    /* Inputs */
+    input[type="text"] {
+      display: flex;
+      height: 32px;
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--input);
+      background-color: transparent;
+      padding: 4px 12px;
+      font-size: 13px;
+      transition: all 0.2s;
+      outline: none;
+      box-sizing: border-box;
+    }
+    input[type="text"]:focus {
+      border-color: var(--ring);
+      box-shadow: 0 0 0 1px var(--ring);
+    }
+
+    /* Layout Components */
+    .hidden { display: none !important; }
+
+    .user-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        margin-bottom: 16px;
+        background-color: var(--card);
+    }
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+    .info-row:last-child { margin-bottom: 0; }
+    
+    .label {
+        color: var(--muted-foreground);
+        width: 80px;
+        flex-shrink: 0;
+    }
+    
+    .value {
+        font-weight: 500;
+        color: var(--foreground);
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    #status {
+      margin-top: 16px;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+      padding: 8px;
+      border-radius: var(--radius);
+      background-color: var(--secondary);
+    }
+    .success { 
+        color: #10b981; /* Emerald 500 */
+        background-color: #ecfdf5 !important;
+    }
+    .error { 
+        color: var(--destructive);
+        background-color: #fef2f2 !important;
+    }
+
+    /* Icons */
+    .icon-git { margin-right: 8px; }
+  </style>
+</head>
+<body>
+  <h2>BFE_Hub</h2>
+  
+  <div id="login-view">
+      <p>Sign in to automatically sync your BFE.dev solutions to GitHub.</p>
+      <button id="login-btn" class="btn-primary">
+        <svg class="icon-git" height="20" viewBox="0 0 16 16" width="20" fill="currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+        Sign in with GitHub
+      </button>
+  </div>
+
+  <div id="logged-in-view" class="hidden">
+      <div class="user-card">
+          <div class="info-row">
+              <span class="label">User</span>
+              <span class="value" id="username">...</span>
+          </div>
+          <div class="info-row">
+              <span class="label">Repository</span>
+              <div class="value" style="width: 100%;">
+                  <!-- View Mode -->
+                  <span id="repo-view-mode" style="display: flex; align-items: center; width: 100%; justify-content: space-between;">
+                      <span id="repo-name" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 100px;">bfe-solutions</span>
+                      <button id="edit-repo-btn" class="btn-ghost">Edit</button>
+                  </span>
+                  <!-- Edit Mode -->
+                  <span id="repo-edit-mode" class="hidden" style="display: flex; gap: 4px; width: 100%;">
+                      <input type="text" id="repo-input" value="bfe-solutions">
+                      <button id="save-repo-btn" class="btn-secondary" style="padding: 4px 8px;">Save</button>
+                      <button id="cancel-repo-btn" class="btn-ghost" style="padding: 4px;">✕</button>
+                  </span>
+              </div>
+          </div>
+      </div>
+      <div id="status">Sync Active</div>
+  </div>
+
+  <script src="popup.js"></script>
+  
+  <div style="margin-top: 20px; text-align: center;">
+      <a href="https://github.com/BFE-Hub/BFE_HUB" target="_blank" style="opacity: 0.6; transition: opacity 0.2s; display: inline-block;">
+        <img src="github-mark.svg" alt="GitHub" width="20" height="20">
+      </a>
+  </div>
+</body>
+</html>

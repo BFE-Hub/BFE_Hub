@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "BFE_Hub",
+  "version": "1.0.0",
+  "description": "Automatically commit BFE.dev solutions to GitHub",
+  "permissions": [
+    "storage",
+    "identity"
+  ],
+  "host_permissions": [
+    "https://bigfrontend.dev/*",
+    "https://api.github.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "BFEHub Settings"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://bigfrontend.dev/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "world": "ISOLATED"
+    },
+    {
+      "matches": ["https://bigfrontend.dev/*"],
+      "js": ["inject.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js"],
+      "matches": ["https://bigfrontend.dev/*"]
+    }
+  ]
+}
