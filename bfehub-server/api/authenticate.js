@@ -4,7 +4,7 @@
 module.exports = async (req, res) => {
   // CORS Handling
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*'); 
+  res.setHeader('Access-Control-Allow-Origin', 'chrome-extension://ajmpkjfgallagdphodjnmddomgaleahn'); 
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
