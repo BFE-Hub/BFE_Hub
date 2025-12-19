@@ -1,79 +1,134 @@
 # BFE_Hub
 
 <div align="center">
-  <img src ="icons/icon128.png" alt="BFE_Hub Logo" width="128" heigth="128" />
+  <img src ="icons/thumbnail_header.png" alt="BFE_Hub Logo" width="128" />
   <h1>BFE_Hub</h1>
+  <p>Automatically sync your BFE.dev solutions to GitHub.</p>
 </div>
 
-**BFE_Hub** is a Chrome extension that automatically syncs your [BFE.dev](https://bigfrontend.dev) solutions to your GitHub repository. Focus on coding, and let BFE_Hub handle the version control.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="license"/></a>
+  <a href="https://chrome.google.com/webstore/detail/ajmpkjfgallagdphodjnmddomgaleahn"><img src="https://img.shields.io/chrome-web-store/v/ajmpkjfgallagdphodjnmddomgaleahn.svg" alt="chrome-webstore"/></a>
+  <a href="https://chrome.google.com/webstore/detail/ajmpkjfgallagdphodjnmddomgaleahn"><img src="https://img.shields.io/chrome-web-store/d/ajmpkjfgallagdphodjnmddomgaleahn.svg" alt="users"></a>
+  <br/>
+  <b>🇺🇸 English</b> | <a href="README_KR.md">🇰🇷 한국어</a>
+</p>
 
-## ✨ Features
+## Table of Contents
 
-- **Automatic Sync**: Automatically pushes your code to GitHub when you pass a problem.
-- **Structured Organization**: Saves solutions in a structured format: `Category/Problem-Name/Problem-Name.js`.
-- **Auto-Generated README**: Automatically creates a `README.md` file for each problem with the problem description.
-- **GitHub OAuth Login**: Secure and easy sign-in with your GitHub account.
-- **Custom Repository**: Choose an existing repository or create a new one to store your solutions.
-- **Success Feedback**: Visual feedback (✅ checkmark) directly on the BFE.dev interface upon successful sync.
+1. [Chrome Web Store](#download-from-chrome-web-store)
+2. [What is BFE_Hub?](#what-is-bfe_hub)
+3. [Installation & Setup](#installation--setup)
+4. [How it Works](#how-it-works)
+    1. [Workflow](#1-workflow)
+    2. [Upload Timing](#2-upload-timing)
+    3. [Saved Information](#3-saved-information)
+5. [Links & Support](#links--support)
 
-## 🚀 Installation
+<br />
 
-### From Chrome Web Store
-*(Coming Soon)*
+## Download from Chrome Web Store
+Click the link below to install BFE_Hub directly from the Chrome Web Store!
+<br/>
+<br/>
 
-### Manual Installation (Developer Mode)
+<span>👉</span>
+<a href="https://chrome.google.com/webstore/detail/ajmpkjfgallagdphodjnmddomgaleahn">
+  <img src="icons/chrome_web_store_logo.svg" alt="Download from Chrome Web Store" width="200"/>
+</a>
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/BFE-Hub/BFE_HUB.git
-   ```
-2. Open Chrome and go to `chrome://extensions`.
-3. Enable **Developer mode** in the top right corner.
-4. Click **Load unpacked**.
-5. Select the cloned directory.
+<br/>
 
-## 📄 Usage
+<a href="https://chrome.google.com/webstore/detail/ajmpkjfgallagdphodjnmddomgaleahn">
+  <img src="icons/webstore_image.png" alt="Available in the Chrome Web Store" width="100%"/>
+</a>
 
-1. **Sign In**: Click the BFE_Hub extension icon and sign in with your GitHub account.
-2. **Setup Repository**:
-   - After signing in, you will be prompted to set a repository name (default suggestion: `bfe-solutions`).
-   - Enter your desired repository name and click **"Save"**.
-   - If the repository doesn't exist, BFE_Hub will automatically create it for you.
-3. **Solve Problems**: Go to [BFE.dev](https://bigfrontend.dev) and solve a problem.
-4. **Submit**: Click "Submit" on BFE.dev.
-5. **Sync**: Once your solution passes, BFE_Hub will automatically upload your code and the problem description to your GitHub repository. You'll see a green checkmark ✅ next to the "Well Done!" message.
+<br />
+<br />
 
-## 🛠 Project Structure
+## What is BFE_Hub?
 
-- `manifest.json`: Extension configuration (Manifest V3).
-- `popup.html` / `popup.js`: Extension popup UI (Login, Repo Settings).
-- `background.js`: Handles GitHub API interactions (Uploads).
-- `inject.js`: Intercepts BFE.dev network requests to detect submissions.
-- `content.js`: Bridges `inject.js` and `background.js`, handles UI updates.
-- `bfehub-server/`: Vercel Serverless Function for secure OAuth token exchange.
+**BFE_Hub** is a Chrome extension that automatically syncs your [BFE.dev](https://bigfrontend.dev) solutions to your GitHub repository. It allows you to build your frontend portfolio effortlessly while practicing for coding interviews.
 
-## 🤝 Contributing
+This project is inspired by tools like LeetHub and BaekjoonHub, aiming to provide a seamless experience for the BFE.dev community.
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+## 🎥 Demo Video
 
-1. Fork the project.
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request.
+[![BFE_Hub Demo Video](https://img.youtube.com/vi/Pten-5zfGG0/0.jpg)](https://www.youtube.com/watch?v=Pten-5zfGG0)
 
-## 📝 License
+<br />
 
-This project is open source and available under the [MIT License](LICENSE).
+## Installation & Setup
 
-## ☕ Support
+1.  **Install** the extension from the [Chrome Web Store](https://chrome.google.com/webstore/detail/ajmpkjfgallagdphodjnmddomgaleahn).
+2.  Click the extension icon and click the **"Sign in with GitHub"** button.
+3.  Authorize the application to link your GitHub account.
+4.  Once redirected, click the extension icon again to see the connection status.
+5.  **Set Repository**: You will be prompted to set a repository name (e.g., `bfe-solutions`). Enter your desired name and click **"Save"**.
+    *   If the repository doesn't exist, BFE_Hub will automatically create it for you.
 
-If you find this tool helpful, consider buying me a coffee!
+<br />
+
+## How it Works
+
+### 1. Workflow
+
+1.  Solve a problem on [BFE.dev](https://bigfrontend.dev).
+2.  Click **Submit**.
+3.  If your solution passes all test cases, BFE_Hub automatically:
+    *   Fetches the problem description and your solution code.
+    *   Commits them to your linked GitHub repository.
+4.  You will see a green checkmark (✅) on the BFE.dev success modal confirming the sync.
+
+### 2. Upload Timing
+
+BFE_Hub triggers only when you successfully pass a problem after clicking "Submit". It does not upload failed attempts.
+
+### 3. Saved Information
+
+When a problem is solved, the following information is parsed and saved to your repository:
+
+| Platform | Problem Metadata | User Submission |
+| :--- | :--- | :--- |
+| **BFE.dev** | - **Category** (e.g., JavaScript, React)<br>- **Problem Title**<br>- **Problem Link**<br>- **Problem Description** (in README.md) | - **Solution Code** (.js / .tsx)<br>- **README.md** |
+
+<br />
+
+## Links & Support
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/BFE-Hub/BFE_HUB/issues" title="Report a Bug">
+          <img src="https://img.icons8.com/fluency/48/000000/bug.png" width="48" height="48" alt="Report Bug">
+      </a><br/><sub><b>Report Bug</b></sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/BFE-Hub/BFE_HUB" title="GitHub Repository">
+        <img src="https://img.icons8.com/fluency/48/000000/github.png" width="48" height="48" alt="GitHub Repo">
+      </a><br/><sub><b>GitHub Repo</b></sub>
+    </td>
+     <td align="center">
+      <a href="https://www.buymeacoffee.com/yminion" title="Buy Me A Coffee">
+        <img src="https://img.icons8.com/fluency/48/000000/coffee-to-go.png" width="48" height="48" alt="Support">
+      </a><br/><sub><b>Support</b></sub>
+    </td>
+  </tr>
+</table>
+
+### ☕ Buy me a coffee
+
+If you find this tool helpful, considering supporting the project!
 
 <a href="https://www.buymeacoffee.com/yminion" target="_blank">
   <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="180" />
 </a>
+
 <br/>
+
+## 📝 License
+
+This project is open source and available under the [MIT License](LICENSE).
 
 ---
 <div align="center">
